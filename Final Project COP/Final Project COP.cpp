@@ -4,6 +4,8 @@
 #include <iostream>
 #include <random>
 #include <vector>
+#include <climits>
+#include <queue>
 
 using namespace std;
 
@@ -74,18 +76,6 @@ public:
         
     }
 
-    
-
-    void printGraph() {
-        for (int i = 0; vertices > i; i++) {
-            cout << "Vertex " << i << " : ";
-            for (auto itr : adjListGraph[i]) {
-                cout << itr.first << " - " << itr.second << ", " ; 
-            }
-            cout << endl;
-        }
-    }
-
     int getTimeEdge(int vertexA, int vertexB) { //this function will find the weight of the edge
         for (int i = 0; adjListGraph[vertexA].size() > i; i++) {
             if (adjListGraph[vertexA][i].first == vertexB) {
@@ -118,6 +108,46 @@ public:
 
         return totalTime;
     }
+    
+    vector<int> dijkstra(int src) {
+        vector<int> distance(vertices, INT_MAX); //sets to infinity
+        priority_queue<pair<int, int>> pQueue;  //creates priority queue
+        pQueue.push({distance[src] = 0, src}); //sets distance from itself to zero
+
+        while (!pQueue.empty()) {
+            int dist = pQueue.top().first;
+            int vertex = pQueue.top().second;
+            pQueue.pop();
+
+            if ( dist >distance[vertex]) {
+                continue;
+            }
+
+            for (auto endVertex : adjListGraph[vertex]) {
+                if (distance[vertex] + endVertex.second < distance[endVertex.first]) {
+                    distance[endVertex.first] = distance[vertex] + endVertex.second;
+                    pQueue.push({distance[endVertex.first], endVertex.first});
+                }
+            }
+        }
+        return distance;
+    }
+    
+     void printGraph() {
+        for (int i = 0; vertices > i; i++) {
+            cout << "Vertex " << i << " : ";
+            for (auto itr : adjListGraph[i]) {
+                cout << itr.first << " - " << itr.second << ", " ; 
+            }
+            cout << endl;
+        }
+    }
+    
+    void printD(vector<int> dist) {
+        for (int i = 0; vertices > i; i++) {
+            cout << dist[i] << endl;
+        }
+    }
 };
 
 
@@ -125,14 +155,19 @@ public:
 int main()
 {
     int sizeOfCountry = 0;
-    cout << "*********Welcome to Triple A’s Delivery service*********" << endl;
+    cout << "*********Welcome to Triple Aâ€™s Delivery service*********" << endl;
     cout << "Enter the Size of your Country(Area in km^2): " << endl;
     cin >> sizeOfCountry;
 
     WeightUndirectedGraph g(100);
+   
+    vector<int> dReturned;
+
     g.generateGraph();
-    g.printGraph();
-    
+    cout << "Edges: " << g.getNumOfEdges() << "\n" << endl;
+    //g.printGraph();
+    dReturned = g.dijkstra(0);
+    //g.printD(dReturned);
 }
 
 
