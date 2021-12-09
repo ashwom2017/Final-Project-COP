@@ -50,7 +50,7 @@ public:
                 if (adjListGraph[i].size() > 2 && i > (.7 * vertices)) { //once it fills up twice we are not going to fill it anymore, after 70%
                     break;
                 }
-                int randomNumberHelper = vertices - i;
+                int randomNumberHelper = vertices - i;  
                 int randomVertex = rand() % randomNumberHelper + i;
                 //we are going to look for edges with higher vertex number to make it quicker to find random
                 if (i > (.7 * vertices)) {
@@ -74,6 +74,8 @@ public:
         
     }
 
+    
+
     void printGraph() {
         for (int i = 0; vertices > i; i++) {
             cout << "Vertex " << i << " : ";
@@ -83,7 +85,42 @@ public:
             cout << endl;
         }
     }
+
+    int getTimeEdge(int vertexA, int vertexB) { //this function will find the weight of the edge
+        for (int i = 0; adjListGraph[vertexA].size() > i; i++) {
+            if (adjListGraph[vertexA][i].first == vertexB) {
+                return adjListGraph[vertexA][i].second;
+            }
+        }
+        
+    }
+
+    int shortestTimeToComplete(int numOfOrders) { //this function will be used on our smaller graph
+        int totalTime = 0;
+        bool* delievered;
+        delievered = new bool[vertices];
+        delievered[0] = true; //setting the first vertex true as that is our head quarters
+        int currentVertex = 0; //STARTING Point
+        int lowestVertex = 0;
+        while (!delievered) {
+            int lowestTime = { INT_MAX };
+            for (int i = 1; i < vertices; i++) {
+                if (getTimeEdge(currentVertex, i) < lowestTime && !delievered[i]) { //we look through all the vertices and see if they ahave been delievered
+                    lowestTime = getTimeEdge(currentVertex, i);
+                    lowestVertex = i;
+                }
+            }
+            currentVertex = lowestVertex;
+            totalTime += lowestTime;
+            delievered[currentVertex] = true;
+
+        }
+
+        return totalTime;
+    }
 };
+
+
 
 int main()
 {
@@ -92,11 +129,11 @@ int main()
     cout << "Enter the Size of your Country(Area in km^2): " << endl;
     cin >> sizeOfCountry;
 
-    WeightUndirectedGraph g(100000);
-    
+    WeightUndirectedGraph g(100);
     g.generateGraph();
-    cout << g.getNumOfEdges() << endl;
+    g.printGraph();
     
 }
+
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging men
